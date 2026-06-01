@@ -23,21 +23,17 @@ func ForwardKinematics(joints [6]float64) [4][4]float64 {
 			out[r][c] = result.At(r, c)
 		}
 	}
-
 	return out
-
 }
 
 // ********************************************************************************************
 // Below code is hardcoded functions that return arctos arm joints forward kinematics functions
 // q1_transform: Alpha=0, a=0, theta=0, d=287.87
 func q1_transform(q float64) *mat.Dense {
-	q_sin := math.Sin(q)
-	q_cos := math.Cos(q)
-
+	s, c := math.Sincos(q)
 	return mat.NewDense(4, 4, []float64{
-		q_cos, -q_sin, 0, 0,
-		q_sin, q_cos, 0, 0,
+		c, -s, 0, 0,
+		s, c, 0, 0,
 		0, 0, 1, 287.87,
 		0, 0, 0, 1,
 	})
@@ -45,12 +41,10 @@ func q1_transform(q float64) *mat.Dense {
 
 // q2_transform: Alpha=-90, a=20.174, theta=-90, d=0
 func q2_transform(q float64) *mat.Dense {
-	q_sin := math.Sin(q)
-	q_cos := math.Cos(q)
-
+	s, c := math.Sincos(q)
 	return mat.NewDense(4, 4, []float64{
-		q_sin, 0, -q_cos, 20.174 * q_sin,
-		-q_cos, 0, -q_sin, -20.174 * q_cos,
+		c, 0, -s, 20.174 * c,
+		s, 0, c, 20.174 * s,
 		0, -1, 0, 0,
 		0, 0, 0, 1,
 	})
@@ -58,12 +52,10 @@ func q2_transform(q float64) *mat.Dense {
 
 // q3_transform: Alpha=0, a=260.986, theta=0, d=0
 func q3_transform(q float64) *mat.Dense {
-	q_sin := math.Sin(q)
-	q_cos := math.Cos(q)
-
+	s, c := math.Sincos(q)
 	return mat.NewDense(4, 4, []float64{
-		q_cos, -q_sin, 0, 260.986 * q_cos,
-		q_sin, q_cos, 0, 260.986 * q_sin,
+		c, -s, 0, 260.986 * c,
+		s, c, 0, 260.986 * s,
 		0, 0, 1, 0,
 		0, 0, 0, 1,
 	})
@@ -71,12 +63,10 @@ func q3_transform(q float64) *mat.Dense {
 
 // q4_transform: Alpha=0, a=19.219, theta=0, d=260.753
 func q4_transform(q float64) *mat.Dense {
-	q_sin := math.Sin(q)
-	q_cos := math.Cos(q)
-
+	s, c := math.Sincos(q)
 	return mat.NewDense(4, 4, []float64{
-		q_cos, -q_sin, 0, 19.219 * q_cos,
-		q_sin, q_cos, 0, 19.219 * q_sin,
+		c, -s, 0, 19.219 * c,
+		s, c, 0, 19.219 * s,
 		0, 0, 1, 260.753,
 		0, 0, 0, 1,
 	})
@@ -84,12 +74,10 @@ func q4_transform(q float64) *mat.Dense {
 
 // q5_transform: Alpha=90, a=0, theta=0, d=0
 func q5_transform(q float64) *mat.Dense {
-	q_sin := math.Sin(q)
-	q_cos := math.Cos(q)
-
+	s, c := math.Sincos(q)
 	return mat.NewDense(4, 4, []float64{
-		q_cos, 0, q_sin, 0,
-		q_sin, 0, -q_cos, 0,
+		c, 0, s, 0,
+		s, 0, -c, 0,
 		0, 1, 0, 0,
 		0, 0, 0, 1,
 	})
@@ -97,12 +85,11 @@ func q5_transform(q float64) *mat.Dense {
 
 // q6_transform: Alpha=-90, a=0, theta=180, d=74.745
 func q6_transform(q float64) *mat.Dense {
-	q_sin := math.Sin(q)
-	q_cos := math.Cos(q)
-
+	theta := q + math.Pi
+	s, c := math.Sincos(theta)
 	return mat.NewDense(4, 4, []float64{
-		-q_cos, 0, q_sin, 0,
-		-q_sin, 0, -q_cos, 0,
+		c, 0, s, 0,
+		s, 0, -c, 0,
 		0, -1, 0, 74.745,
 		0, 0, 0, 1,
 	})

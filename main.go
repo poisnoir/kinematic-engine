@@ -1,10 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
 
-	HOME_MATRIX := ForwardKinematics([6]float64{0, 0, 0, 0, 0, 0})
+	HOME_MATRIX := ForwardKinematics([6]float64{1, 0, 0, 0, 0, 0})
 
 	fmt.Println(HOME_MATRIX)
 }

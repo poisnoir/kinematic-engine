@@ -8,7 +8,43 @@ import (
 
 // Todo: I am using memory crazy in this code without reuse. If there is a lag in future this code can be optimized
 
+// This matrix decouples q5 and q6 from target end point resulting in creating position for q1..4 joints
+var q5q6Remove *mat.Dense = mat.NewDense(4, 4, []float64{
+	-1, 0, 0, 0,
+	0, 1, 0, 74.745,
+	0, 0, 1, 0,
+	0, 0, 0, 1,
+})
+
 func InverseKinematics(transform [4][4]float64) [][6]float64 {
+
+	// transform[2, 1] = -cos(q3 + q5)
+	// transform[2, 2] = sin(q₆)⋅sin(q₃ + q₅)
+
+	var sum_q3q5 [2]float64
+	sum_q3q5[0] = math.Acos(-transform[2][1])
+	sum_q3q5[1] = -sum_q3q5[0]
+
+	for _, sum_q3q5 := range sum_q3q5 {
+
+		sin_q6 := transform[2][2] / math.Sin(sum_q3q5)
+		var q6s [2]float64
+		q6s[0] = math.Asin(sin_q6)
+		q6s[1] = math.Pi - q6s[0]
+
+		// transform[2, 3] = -280.205⋅sin(q₃) + 74.745⋅cos(q₃ + q₅) + 287.87
+		sin_q3 := (transform[2][3] - 287.87 + transform[2][1]*74.745) / -280.205
+
+		var q3s [2]float64
+		q3s[0] = math.Asin(sin_q3)
+		q3s[1] = math.Pi - q3s[0]
+
+		var q5s [2]float64
+		q5s[0] = sum_q3q5 - q3s[0]
+		q5s[1] = sum_q3q5 - q3s[1]
+
+	}
+
 	return nil
 }
 

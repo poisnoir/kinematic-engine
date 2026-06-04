@@ -14,11 +14,24 @@ robot = DHRobot([
 
 
 def forward_kinematics(joints):
-    return robot.fkine(joints)
+    return robot.fkine(joints).A
 
 
 
-def inverse_kinematics(trasform, joints):
-    return robot.ikine_LM(trasform, q0=joints)
+def inverse_kinematics(Tep_target, current_joints):
+    return robot.ets().ikine_LM(
+    Tep=Tep_target,
+    q0=current_joints,  # Start searching right where the robot is standing
+    ilimit=30,                # Number of gradient steps allowed
+    slimit=1,                 # CRITICAL: Disables the random reposition restarts
+    tol=1e-6,                 # Precision tolerance
+    joint_limits=True,        # Keep things constrained safely inside limits
+    method="sugihara",
+    
+    # --- The "Heavy Weights" Strategy ---
+    kq=10.0,                  # High gain forcing optimization into the null space
+    ps=0.05,                  # Sharp safety barrier buffer near structural bounds
+    pi=0.8                    # Kicks the tracking priority into hyperdrive early
+)
 
 

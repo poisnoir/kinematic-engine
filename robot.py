@@ -15,7 +15,7 @@ class Robot:
         self.input_source = input_source
         self.output_source = output_source
 
-        self.current_joints = np.array([0, 0, 0, 0, 0, 0])
+        self.current_joints = self.current_joints = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float64)
 
 
     def run(self):
@@ -27,6 +27,7 @@ class Robot:
             current_position = forward_kinematics(self.current_joints)
             goal = current_position @ displacement
             result = inverse_kinematics(goal, self.current_joints)
-            if result.success:
-                self.current_joints = result.q
+            if not result.success:
+                continue
+            self.current_joints = result.q
 
